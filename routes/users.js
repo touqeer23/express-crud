@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/user.controller');
 const multer  = require('multer')
 const uploader = multer();
-const fileUploads = uploader.fields([{ name: 'user_profile', maxCount: 1 }, { name: 'files', maxCount: 1 }])
+const fileUploads = uploader.fields([{ name: 'user_profile', maxCount: 1 }, { name: 'file0', maxCount: 1 }])
 
 
 router.post('/register',userController.register);
