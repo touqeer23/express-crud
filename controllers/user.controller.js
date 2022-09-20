@@ -62,7 +62,7 @@ async function uploadFiles(req, res, next) {
 
     try {
 
-        const userFile = req.files['file0'];
+        const userFile = req.files['file0'][0];
         const fileUrl = await uploadToFirebaseStorage(userFile.buffer, userFile.originalname);
         res.status(200).json({ message: 'success', result: { data: { file_url: fileUrl } } });
 
