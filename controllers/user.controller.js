@@ -62,29 +62,62 @@ async function uploadFiles(req, res, next) {
 
     try {
 
-        const filesArray = req.files['files'];
-        const { user_id } = req.body;
-        const toBeCreatedFilesLink = [];
-        if (filesArray.length) {
-            
-            await Promise.all(filesArray.map(async (d) => {
-                const result = await uploadToFirebaseStorage(d.buffer, d.originalname);
-                console.log('result: ', result);
-                toBeCreatedFilesLink.push({ user: user_id, url: result });
-            }));
-            
-            
-            const insertedFiles = await UserStorage.insertMany(toBeCreatedFilesLink);
-            res.status(200).json({ message: 'success', result: { data: insertedFiles } })
-        }
+        const userFile = req.files['files'][0];
+        const fileUrl = await uploadToFirebaseStorage(userFile.buffer, userFile.originalname);
+        res.status(200).json({ message: 'success', result: { data: { file_url: fileUrl } } });
 
     } catch (error) {
         res.status(401).json({ message: error?.message, data: {} });
     }
 }
 
+async function saveUploadedFile(req, res, next) {
+
+    try {
+
+        const { user_id, url } = req.body;
+        await User.updateOne(
+            {
+                _id: user_id
+            },
+            {
+                "$push": { files: [{ 'url': url }] }
+            }
+        );
+
+        res.status(200).json({ message: 'success', result: { data: {} } });
+
+    } catch (error) {
+        res.status(401).json({ message: error?.message, data: {} });
+    }
+}
+
+async function getUsers(req,res,next){
+
+    try {
+
+        let userData;
+        if (req?.body?.user_id) {
+            userData = __parse(await User.findOne({ _id: req.body.user_id }).select({ password: 0 }).populate('role'));
+        }
+        else {
+            userData = __parse(await User.find({}).select({ password: 0 }).populate('role'));
+        }
+
+        res.status(200).json({ message: 'success', result: { data: userData  } });
+
+    } catch (error) {
+        res.status(401).json({ message: error?.message, data: {} });
+    }
+   
+
+
+}
+
 module.exports = {
     register,
     login,
-    uploadFiles
+    uploadFiles,
+    saveUploadedFile,
+    getUsers
 }
