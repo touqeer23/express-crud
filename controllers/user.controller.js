@@ -98,10 +98,10 @@ async function getUsers(req,res,next){
 
         let userData;
         if (req?.body?.user_id) {
-            userData = __parse(await User.findOne({ _id: req.body.user_id }).populate('role'));
+            userData = __parse(await User.findOne({ _id: req.body.user_id }).select({ password: 0 }).populate('role'));
         }
         else {
-            userData = __parse(await User.find({}).populate('role'));
+            userData = __parse(await User.find({}).select({ password: 0 }).populate('role'));
         }
 
         res.status(200).json({ message: 'success', result: { data: userData  } });
