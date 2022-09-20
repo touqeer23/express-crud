@@ -64,17 +64,6 @@ async function uploadFiles(req, res, next) {
 
         const userFile = req.files['files'][0];
         const fileUrl = await uploadToFirebaseStorage(userFile.buffer, userFile.originalname);
-        //const toBeCreatedFilesLink = [];
-        // if (filesArray.length) {
-            
-        //     await Promise.all(filesArray.map(async (d) => {
-        //         const result = await uploadToFirebaseStorage(d.buffer, d.originalname);
-        //         console.log('result: ', result);
-        //         toBeCreatedFilesLink.push({ user: user_id, url: result });
-        //     }));
-        // }
-        //const insertedFiles = await UserStorage.insertMany(toBeCreatedFilesLink);
-    
         res.status(200).json({ message: 'success', result: { data: { file_url: fileUrl } } });
 
     } catch (error) {
