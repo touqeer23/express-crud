@@ -36,7 +36,7 @@ async function login(req, res, next) {
     try {
 
         const { email, password } = req.body;
-        const foundUser = __parse(await User.findOne({ email: email }));
+        const foundUser = __parse(await User.findOne({ email: email }).populate('role'));
         if (!foundUser) {
             throw new Error('Use not found !');
         }
